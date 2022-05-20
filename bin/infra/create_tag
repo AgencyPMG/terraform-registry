@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+set -e
+
+VERSION=$1
+
+usage() {
+    echo "usage: $0 yyyymmdd.i"
+    echo "example: $0 20191019.1"
+}
+
+if [ -z "$VERSION" ]; then
+    usage
+    exit 1
+fi
+
+
+git checkout master
+git pull
+git tag "$VERSION"
+git push --tags

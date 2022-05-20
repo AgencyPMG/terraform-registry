@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+set -e
+
+if [ "$#" != 2 ]; then
+    echo "Usage: $0 {environment} {version}" >&2
+    exit 1
+fi
+
+env=$1
+version=$2
+
+./bin/infra/ecr_login
+./bin/infra/build "$env" "$version"
+./bin/infra/push "$env" "$version"

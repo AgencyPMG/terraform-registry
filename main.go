@@ -54,6 +54,13 @@ var (
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
+	e.Use(middleware.KeyAuth(func(key string, c echo.Context) (bool, error) {
+		if api_key, ok := os.LookupEnv("API_KEY"); ok {
+			return key == api_key, nil
+		} else {
+			return false, nil
+		}
+	}))
 
 	client := newClient()
 

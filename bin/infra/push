@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ "$#" != 2 ]; then
+    echo "Usage: $0 {environment} {version}" >&2
+    exit 1
+fi
+
+env=$1
+version=$2
+
+echo "pushing $env $version"
+
+docker tag terraform-registry 286059827323.dkr.ecr.us-east-1.amazonaws.com/terraform-registry:latest
+docker push 286059827323.dkr.ecr.us-east-1.amazonaws.com/terraform-registry:latest

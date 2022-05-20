@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# log in to amis ecr endpoint to allow pulling base images
+this_account_id=$(aws sts get-caller-identity --query Account --output text)
+if aws ecr get-login-password help > /dev/null 2>&1; then
+    for id in "$this_account_id" 024483114790; do
+        ecr_repo="https://$id.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+        aws ecr get-login-password --region "$AWS_DEFAULT_REGION" \
+            | docker login --username AWS --password-stdin "$ecr_repo"
+    done
+else
+    eval "$(aws ecr get-login \
+        --no-include-email \
+        --region "$AWS_DEFAULT_REGION" \
+        --registry-ids "$this_account_id" 024483114790
+    )"
+fi
