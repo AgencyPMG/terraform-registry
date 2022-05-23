@@ -31,6 +31,9 @@ import (
 	"os"
 	"regexp"
 	"strings"
+    "errors"
+
+    "crypto/subtle"
 
 	"golang.org/x/crypto/openpgp/packet"
 
@@ -54,12 +57,14 @@ var (
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
+
 	e.Use(middleware.KeyAuth(func(key string, c echo.Context) (bool, error) {
-		if api_key, ok := os.LookupEnv("API_KEY"); ok {
-			return key == api_key, nil
-		} else {
-			return false, nil
+		api_key, ok := os.LookupEnv("API_KEY");
+		if !ok {
+			return false, errors.New("missing API_KEY in the environment")
 		}
+
+		return subtle.ConstantTimeCompare([]byte(api_key), []byte(key)) == 1, nil;
 	}))
 
 	client := newClient()
